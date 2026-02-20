@@ -26,6 +26,8 @@ export function Header() {
   const [searchResults, setSearchResults] = useState<typeof courses>([]);
   const [searchFocused, setSearchFocused] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null); 
+
 
   useEffect(() => {
     const stored = localStorage.getItem('ycourse_user');
@@ -34,15 +36,17 @@ export function Header() {
 
   // Cerrar dropdown al hacer clic fuera
   useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
-        setSearchFocused(false);
-      }
-      setDropdownOpen(false);
-    };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, []);
+  const handleClick = (e: MouseEvent) => {
+    if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+      setSearchFocused(false);
+    }
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      setDropdownOpen(false); // ← solo cierra si el clic fue FUERA del dropdown
+    }
+  };
+  document.addEventListener('mousedown', handleClick);
+  return () => document.removeEventListener('mousedown', handleClick);
+}, []);
 
   // Bloquear scroll cuando menú móvil está abierto
   useEffect(() => {
@@ -172,7 +176,7 @@ export function Header() {
                   <Button variant="ghost" className="text-gray-700" asChild>
                     <Link to="/my-courses">Mis Cursos</Link>
                   </Button>
-                  <div className="relative">
+                  <div className="relative" ref={dropdownRef}>
                     <button
                       onClick={e => { e.stopPropagation(); setDropdownOpen(!dropdownOpen); }}
                       className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all"
