@@ -5,8 +5,8 @@ export function useCursos() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/cursos')
-      .then(res => res.json())
+fetch('http://localhost:3001/api/cursos')     
+ .then(res => res.json())
       .then(data => {
         setCursos(data);
         setLoading(false);
